@@ -53,15 +53,17 @@
         let tapCount = 0;
 
         function createCoin(x, y) {
-            const coin = document.createElement('div');
-            coin.className = 'coin';
-            coin.style.left = `${x - 25}px`;
-            coin.style.top = `${y - 25}px`;
-            document.body.appendChild(coin);
+            for (let i = 0; i < 3; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'coin';
+                coin.style.left = `${x - 25 + (i * 20)}px`; // Spread coins horizontally
+                coin.style.top = `${y - 25}px`;
+                document.body.appendChild(coin);
 
-            coin.addEventListener('animationend', () => {
-                coin.remove();
-            });
+                coin.addEventListener('animationend', () => {
+                    coin.remove();
+                });
+            }
         }
 
         function updateCounter() {
@@ -69,16 +71,15 @@
             document.getElementById('counter').textContent = `Taps: ${tapCount}`;
         }
 
-        document.addEventListener('click', (event) => {
-            createCoin(event.clientX, event.clientY);
+        function handleTap(event) {
+            const x = event.clientX || event.touches[0].clientX;
+            const y = event.clientY || event.touches[0].clientY;
+            createCoin(x, y);
             updateCounter();
-        });
+        }
 
-        document.addEventListener('touchstart', (event) => {
-            const touch = event.touches[0];
-            createCoin(touch.clientX, touch.clientY);
-            updateCounter();
-        });
+        document.addEventListener('click', handleTap);
+        document.addEventListener('touchstart', handleTap);
     </script>
 </body>
 </html>
