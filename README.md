@@ -1,0 +1,2 @@
+# goldcoinsgame
+A prototype.
