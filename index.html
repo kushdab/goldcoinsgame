@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Coin Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: url('image1.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        #counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: clamp(16px, 2vw, 24px);
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .coin {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: gold;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            animation: fall 2s linear forwards;
+        }
+
+        @keyframes fall {
+            0% { top: -50px; }
+            100% { top: 100vh; }
+        }
+
+        @media (max-width: 600px) {
+            .coin {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="counter">Taps: 0</div>
+    <script>
+        let tapCount = 0;
+
+        function createCoin(x, y) {
+            const coin = document.createElement('div');
+            coin.className = 'coin';
+            coin.style.left = `${x - 25}px`;
+            coin.style.top = `${y - 25}px`;
+            document.body.appendChild(coin);
+
+            coin.addEventListener('animationend', () => {
+                coin.remove();
+            });
+        }
+
+        function updateCounter() {
+            tapCount++;
+            document.getElementById('counter').textContent = `Taps: ${tapCount}`;
+        }
+
+        document.addEventListener('click', (event) => {
+            createCoin(event.clientX, event.clientY);
+            updateCounter();
+        });
+
+        document.addEventListener('touchstart', (event) => {
+            const touch = event.touches[0];
+            createCoin(touch.clientX, touch.clientY);
+            updateCounter();
+        });
+    </script>
+</body>
+</html>
