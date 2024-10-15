@@ -10,7 +10,7 @@
             overflow: hidden;
             font-family: Arial, sans-serif;
             background: url('image3.png') no-repeat center center fixed;
-            background-size: contain; /* Ensure the entire image is visible */
+            background-size: contain;
         }
 
         #counter {
@@ -31,12 +31,13 @@
             background: gold;
             border-radius: 50%;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            animation: fall 2s linear forwards;
+            animation: fall 2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
         }
 
         @keyframes fall {
-            0% { top: -50px; }
-            100% { top: 100vh; }
+            0% { top: -50px; opacity: 0; }
+            10% { opacity: 1; }
+            100% { top: 100vh; opacity: 0; }
         }
 
         @media (max-width: 600px) {
@@ -52,18 +53,18 @@
     <script>
         let tapCount = 0;
 
-        function createCoin(x, y) {
-            for (let i = 0; i < 3; i++) {
+        function createCoin(x, y, delay) {
+            setTimeout(() => {
                 const coin = document.createElement('div');
                 coin.className = 'coin';
-                coin.style.left = `${x - 25 + (i * 20)}px`; // Spread coins horizontally
+                coin.style.left = `${x - 25}px`;
                 coin.style.top = `${y - 25}px`;
                 document.body.appendChild(coin);
 
                 coin.addEventListener('animationend', () => {
                     coin.remove();
                 });
-            }
+            }, delay);
         }
 
         function updateCounter() {
@@ -74,7 +75,9 @@
         function handleTap(event) {
             const x = event.clientX || event.touches[0].clientX;
             const y = event.clientY || event.touches[0].clientY;
-            createCoin(x, y);
+            for (let i = 0; i < 3; i++) {
+                createCoin(x, y, i * 300); // Delay each coin by 300ms
+            }
             updateCounter();
         }
 
