@@ -9,8 +9,8 @@
             margin: 0;
             overflow: hidden;
             font-family: Arial, sans-serif;
-            background: url('image3.png') no-repeat center center fixed;
-            background-size: contain;
+            background: url('image1.png') no-repeat center center fixed;
+            background-size: cover;
         }
 
         #counter {
@@ -31,13 +31,12 @@
             background: gold;
             border-radius: 50%;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            animation: fall 2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+            animation: fall 2s linear forwards;
         }
 
         @keyframes fall {
-            0% { top: -50px; opacity: 0; }
-            10% { opacity: 1; }
-            100% { top: 100vh; opacity: 0; }
+            0% { top: -50px; }
+            100% { top: 100vh; }
         }
 
         @media (max-width: 600px) {
@@ -46,6 +45,35 @@
                 height: 30px;
             }
         }
+
+        /* Confetti styles */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: red;
+            animation: confettiFall 3s linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+
+        /* Fireworks styles */
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: yellow;
+            border-radius: 50%;
+            animation: fireworkExplosion 1s ease-out forwards;
+        }
+
+        @keyframes fireworkExplosion {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(10); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -53,36 +81,68 @@
     <script>
         let tapCount = 0;
 
-        function createCoin(x, y, delay) {
-            setTimeout(() => {
-                const coin = document.createElement('div');
-                coin.className = 'coin';
-                coin.style.left = `${x - 25}px`;
-                coin.style.top = `${y - 25}px`;
-                document.body.appendChild(coin);
+        function createCoin(x, y) {
+            const coin = document.createElement('div');
+            coin.className = 'coin';
+            coin.style.left = `${x - 25}px`;
+            coin.style.top = `${y - 25}px`;
+            document.body.appendChild(coin);
 
-                coin.addEventListener('animationend', () => {
-                    coin.remove();
+            coin.addEventListener('animationend', () => {
+                coin.remove();
+            });
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * window.innerWidth}px`;
+                confetti.style.top = `${Math.random() * window.innerHeight}px`;
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                document.body.appendChild(confetti);
+
+                confetti.addEventListener('animationend', () => {
+                    confetti.remove();
                 });
-            }, delay);
+            }
+        }
+
+        function createFireworks() {
+            for (let i = 0; i < 50; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = `${Math.random() * window.innerWidth}px`;
+                firework.style.top = `${Math.random() * window.innerHeight}px`;
+                document.body.appendChild(firework);
+
+                firework.addEventListener('animationend', () => {
+                    firework.remove();
+                });
+            }
         }
 
         function updateCounter() {
             tapCount++;
             document.getElementById('counter').textContent = `Taps: ${tapCount}`;
-        }
 
-        function handleTap(event) {
-            const x = event.clientX || event.touches[0].clientX;
-            const y = event.clientY || event.touches[0].clientY;
-            for (let i = 0; i < 3; i++) {
-                createCoin(x, y, i * 300); // Delay each coin by 300ms
+            if (tapCount % 100 === 0 && tapCount < 500) {
+                createConfetti();
+            } else if (tapCount === 500) {
+                createFireworks();
             }
-            updateCounter();
         }
 
-        document.addEventListener('click', handleTap);
-        document.addEventListener('touchstart', handleTap);
+        document.addEventListener('click', (event) => {
+            createCoin(event.clientX, event.clientY);
+            updateCounter();
+        });
+
+        document.addEventListener('touchstart', (event) => {
+            const touch = event.touches[0];
+            createCoin(touch.clientX, touch.clientY);
+            updateCounter();
+        });
     </script>
 </body>
 </html>
