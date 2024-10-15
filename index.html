@@ -9,7 +9,7 @@
             margin: 0;
             overflow: hidden;
             font-family: Arial, sans-serif;
-            background: url('image3.jpg') no-repeat center center fixed;
+            background: url('image-large.jpg') no-repeat center center fixed;
             background-size: cover;
         }
 
@@ -44,6 +44,10 @@
                 width: 30px;
                 height: 30px;
             }
+            body {
+                background: url('image-small.jpg') no-repeat center center fixed;
+                background-size: cover;
+            }
         }
 
         /* Confetti styles */
@@ -74,12 +78,26 @@
             0% { transform: scale(1); opacity: 1; }
             100% { transform: scale(10); opacity: 0; }
         }
+
+        .spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: red;
+            border-radius: 50%;
+            animation: sparkFly 1s ease-out forwards;
+        }
+
+        @keyframes sparkFly {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0.5); opacity: 0; }
+        }
     </style>
 </head>
 <body>
-    <div id="counter">Taps: 0</div>
+    <div id="counter">Coins: 0</div>
     <script>
-        let tapCount = 0;
+        let coinCount = 0;
 
         function createCoin(x, y) {
             const coin = document.createElement('div');
@@ -109,7 +127,7 @@
         }
 
         function createFireworks() {
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 10; i++) {
                 const firework = document.createElement('div');
                 firework.className = 'firework';
                 firework.style.left = `${Math.random() * window.innerWidth}px`;
@@ -119,16 +137,32 @@
                 firework.addEventListener('animationend', () => {
                     firework.remove();
                 });
+
+                for (let j = 0; j < 20; j++) {
+                    const spark = document.createElement('div');
+                    spark.className = 'spark';
+                    spark.style.left = firework.style.left;
+                    spark.style.top = firework.style.top;
+                    spark.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                    spark.style.setProperty('--x', `${Math.random() * 200 - 100}px`);
+                    spark.style.setProperty('--y', `${Math.random() * 200 - 100}px`);
+                    document.body.appendChild(spark);
+
+                    spark.addEventListener('animationend', () => {
+                        spark.remove();
+                    });
+                }
             }
         }
 
         function updateCounter() {
-            tapCount++;
-            document.getElementById('counter').textContent = `Taps: ${tapCount}`;
+            coinCount++;
+            document.getElementById('counter').textContent = `Coins: ${coinCount}`;
 
-            if (tapCount % 100 === 0 && tapCount < 500) {
+            if (coinCount % 100 === 0) {
                 createConfetti();
-            } else if (tapCount === 500) {
+            }
+            if (coinCount % 500 === 0) {
                 createFireworks();
             }
         }
